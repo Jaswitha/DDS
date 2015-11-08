@@ -1,3 +1,5 @@
+package sample.sample1;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,17 +18,17 @@ public class SpatialJoin
     {
         SparkConf conf = new SparkConf().setMaster("local").setAppName("check");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        JavaRDD<String> input = sc.textFile(args[0]);
+        JavaRDD<String> input = sc.textFile("/home/pavan/workspace/aid.csv");
         List<String> input2 = input.collect();
         String[] input2String = input2.toArray(new String[0]);
         
         Broadcast<String[]> broadcastVar = sc.broadcast(input2String);
     	final String[] broad = broadcastVar.value();
         
-        input = sc.textFile(args[1]);
-        JavaRDD<Double> SpatialJoinOutput = input.mapPartitions(new FlatMapFunction<Iterator<String>, Double>() {
+        input = sc.textFile("/home/pavan/workspace/bid.csv");
+        JavaRDD<String> SpatialJoinOutput = input.mapPartitions(new FlatMapFunction<Iterator<String>, String>() {
             
-            public Iterable<Double> call(Iterator<String> t) throws Exception {
+            public Iterable<String> call(Iterator<String> t) throws Exception {
                 ArrayList<String> outputpoints = new ArrayList<String>();
                 while(t.hasNext())
                 {
@@ -44,38 +46,40 @@ public class SpatialJoin
                     {
                         String str[] = part.split(",");
                         
-                        if(str.length() == 5)
+                        if(str.length == 5)
                         {
-                            double aid = Double.parseDouble(str[0]);
-                            double p1 = Double.parseDouble(str[1]);
-                            double q1 = Double.parseDouble(str[2]);```````````````
-                            double p2 = Double.parseDouble(str[3]);
-                            double q2 = Double.parseDouble(str[4]);
+                        	Double aid = Double.parseDouble(str[0]);
+                        	Double p1 = Double.parseDouble(str[1]);
+                        	Double q1 = Double.parseDouble(str[2]);
+                        	Double p2 = Double.parseDouble(str[3]);
+                        	Double q2 = Double.parseDouble(str[4]);
 
-                            if((Math.max(x1, x2) > Math.max(p1, p2)) && (Math.max(y1, y2) > Math.max(q1, q2)) && (Math.min(x1, x2) < Math.min(p1, p2)) && (Math.min(y1, y2) < Math.min(q1, q2)))
+                            if((Math.max(x1, x2) >= Math.max(p1, p2)) && (Math.max(y1, y2) >= Math.max(q1, q2)) && (Math.min(x1, x2) <= Math.min(p1, p2)) && (Math.min(y1, y2) <= Math.min(q1, q2)))
                             {
-                                if(outputline == null) outputline = aid.intValue();
-                                else outputline += "," + aid.intValue();
+                                if(outputline == null) outputline = Integer.toString(aid.intValue());
+                                else outputline += "," + Integer.toString(aid.intValue());
                             }
                         }
                         
-                        else if(str.length() == 3)
+                        else if(str.length == 3)
                         {
-                            double aid = Double.parseDouble(str[0]);
-                            double p1 = Double.parseDouble(str[1]);
-                            double q1 = Double.parseDouble(str[2]);
+                            Double aid = Double.parseDouble(str[0]);
+                            Double p1 = Double.parseDouble(str[1]);
+                            Double q1 = Double.parseDouble(str[2]);
                             
-                            if((p1 < x2 && p1 > x1) && (q1 > y1 && q1 < y2))
+                            if((p1 <= x2 && p1 >= x1) && (q1 >= y1 && q1 <= y2))
                             {
-                                if(outputline == null) outputline = aid.intValue();
-                                else outputline += "," + aid.intValue();
+                                if(outputline == null) outputline = Integer.toString(aid.intValue());
+                                else outputline += "," + Integer.toString(aid.intValue());
                             }
                         }
                     }
-                    outputpoints.add(bid.intValue().toString() + outputline);
+                    outputpoints.add(Integer.toString(bid.intValue()) +"," +outputline);
                 }
                 return outputpoints;
             }
         });
+        
+        SpatialJoinOutput.saveAsTextFile("/home/pavan/workspace/spatialjoin.txt");
     }
 }
