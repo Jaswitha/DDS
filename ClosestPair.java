@@ -1,3 +1,4 @@
+package sample.sample1;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class ClosestPair {
               .setMaster("local")
               .setAppName("check");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        JavaRDD<String> input = sc.textFile("/home/pavan/workspace/aid.csv");
+        JavaRDD<String> input = sc.textFile("/home/pavan/workspace/ClosestPairTestData.csv");
         JavaRDD<Coordinate> localconvexpoints = input.mapPartitions(new FlatMapFunction<Iterator<String>,Coordinate>(){
             private static final long serialVersionUID = 1L;
             public Iterable<Coordinate> call(Iterator<String> s) throws Exception {
@@ -78,13 +79,12 @@ public class ClosestPair {
                 {
                     for (int j = i+1;j<points;j++)
                     {
-                        double localDistance = Math.sqrt(Math.pow(inputpoints.get(i).x-inputpoints.get(j).x, 2))+(Math.pow(inputpoints.get(i).y - inputpoints.get(j).y ,2));
+                        double localDistance = Math.sqrt(Math.pow(inputpoints.get(i).x-inputpoints.get(j).x, 2)+(Math.pow(inputpoints.get(i).y - inputpoints.get(j).y ,2)));
                         if (localDistance < leastDistance)
                         {
                             leastDistance = localDistance;
                             closest_a = inputpoints.get(i);
                             closest_b = inputpoints.get(j);
-                            System.out.println("leastDistance = "+leastDistance+", a = "+closest_a+", b = "+closest_b);
                         }
                     }
                 }
