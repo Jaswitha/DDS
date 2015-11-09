@@ -18,11 +18,13 @@ public class FarthestPairPoints {
 
 	public static void main(String args[]) throws IOException
 	{
+	    Date date1 = new Date();
+	    System.out.println(date1.toString());
 		SparkConf conf = new SparkConf()
 	            .setMaster("local")
 	            .setAppName("check");
 		JavaSparkContext sc = new JavaSparkContext(conf);
-		JavaRDD<String> input = sc.textFile("/home/pavan/workspace/aid.csv");
+		JavaRDD<String> input = sc.textFile("/home/pavan/workspace/FarthestPairTestData.csv");
 		JavaRDD<Coordinate> localconvexpoints = input.mapPartitions(new FlatMapFunction<Iterator<String>,Coordinate>(){
 			  private static final long serialVersionUID = 1L;
 			  public Iterable<Coordinate> call(Iterator<String> s) throws Exception {
@@ -96,12 +98,13 @@ public class FarthestPairPoints {
 		{
 			for (int j = i+1;j<totalConvexHullPoints;j++)
 			{
-				double localDistance = Math.sqrt(Math.pow(GlobalConvexHullPoints.get(i).x-GlobalConvexHullPoints.get(j).x,2))+(Math.pow(GlobalConvexHullPoints.get(i).y-GlobalConvexHullPoints.get(j).y,2));
+				double localDistance = Math.sqrt(Math.pow(GlobalConvexHullPoints.get(i).x-GlobalConvexHullPoints.get(j).x,2)+(Math.pow(GlobalConvexHullPoints.get(i).y-GlobalConvexHullPoints.get(j).y,2)));
 				if (localDistance > farthestDistance)
 				{
 					farthestDistance = localDistance;
 					farthest_a = GlobalConvexHullPoints.get(i);
 					farthest_b = GlobalConvexHullPoints.get(j);
+					//System.out.println("farthestDistance = "+farthestDistance+", a = "+farthest_a+", b = "+farthest_b);
 				}
 			}
 		}
@@ -109,8 +112,11 @@ public class FarthestPairPoints {
 		ArrayList<Coordinate> farthestPoints = new ArrayList<Coordinate>();
 		farthestPoints.add(farthest_a);
 		farthestPoints.add(farthest_b);
+		//System.out.println("Final farthestDistance = "+farthestDistance+", a = "+farthest_a+", b = "+farthest_b);
 		JavaRDD<Coordinate>globalFathestPoints = sc.parallelize(farthestPoints);
 		globalFathestPoints.saveAsTextFile("/home/pavan/workspace/farthestpairpoints.txt");
 		sc.close();
+		Date date2 = new Date();
+	    System.out.println(date2.toString());
 		}
 }
