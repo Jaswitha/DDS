@@ -18,14 +18,14 @@ public class SpatialJoin
     {
         SparkConf conf = new SparkConf().setMaster("local").setAppName("check");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        JavaRDD<String> input = sc.textFile("/home/pavan/workspace/aid.csv");
+        JavaRDD<String> input = sc.textFile("/home/pavan/workspace/JoinQueryInput1.csv");
         List<String> input2 = input.collect();
         String[] input2String = input2.toArray(new String[0]);
         
         Broadcast<String[]> broadcastVar = sc.broadcast(input2String);
     	final String[] broad = broadcastVar.value();
         
-        input = sc.textFile("/home/pavan/workspace/bid.csv");
+        input = sc.textFile("/home/pavan/workspace/JoinQueryInput2.csv");
         JavaRDD<String> SpatialJoinOutput = input.mapPartitions(new FlatMapFunction<Iterator<String>, String>() {
             
             public Iterable<String> call(Iterator<String> t) throws Exception {
@@ -54,7 +54,7 @@ public class SpatialJoin
                         	Double p2 = Double.parseDouble(str[3]);
                         	Double q2 = Double.parseDouble(str[4]);
 
-                            if((Math.max(x1, x2) >= Math.max(p1, p2)) && (Math.max(y1, y2) >= Math.max(q1, q2)) && (Math.min(x1, x2) <= Math.min(p1, p2)) && (Math.min(y1, y2) <= Math.min(q1, q2)))
+                            if(((Math.max(x1, x2) >= Math.max(p1, p2)) && (Math.max(y1, y2) >= Math.max(q1, q2)) && (Math.min(x1, x2) <= Math.min(p1, p2)) && (Math.min(y1, y2) <= Math.min(q1, q2))) || ((Math.max(x1, x2) <= Math.max(p1, p2)) && (Math.max(y1, y2) <= Math.max(q1, q2)) && (Math.min(x1, x2) >= Math.min(p1, p2)) && (Math.min(y1, y2) >= Math.min(q1, q2))))
                             {
                                 if(outputline == null) outputline = Integer.toString(aid.intValue());
                                 else outputline += "," + Integer.toString(aid.intValue());
