@@ -27,7 +27,7 @@ public class GoemtryUnion {
 	            .setAppName("check");
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
-		JavaRDD<String> input = sc.textFile("/home/jaswitha/InputData/aid.csv");
+		JavaRDD<String> input = sc.textFile("/home/pavan/workspace/UnionQueryTestData.csv");
 		JavaRDD<Geometry>localUnion = input.mapPartitions(new FlatMapFunction<Iterator<String>,Geometry>(){
 			
 				
@@ -44,10 +44,10 @@ public class GoemtryUnion {
 					String inputline = s.next();
 					inputCoordinates.add(inputline.split(","));
 					
-					Double x1 =Double.parseDouble(inputCoordinates.get(0)[1]);
-					Double y1 =Double.parseDouble(inputCoordinates.get(0)[2]);
-					Double x2 =Double.parseDouble(inputCoordinates.get(0)[3]); 
-					Double y2 =Double.parseDouble(inputCoordinates.get(0)[4]);
+					Double x1 =Double.parseDouble(inputCoordinates.get(0)[0]);
+					Double y1 =Double.parseDouble(inputCoordinates.get(0)[1]);
+					Double x2 =Double.parseDouble(inputCoordinates.get(0)[2]); 
+					Double y2 =Double.parseDouble(inputCoordinates.get(0)[3]);
 					System.out.println("x1"+x1);
 					System.out.println("y1"+y1);
 					System.out.println("x2"+x2);
@@ -120,7 +120,7 @@ public class GoemtryUnion {
 				
 		});
 		
-			globalUnion.saveAsTextFile("/home/jaswitha/Downloads/outputunion.txt");
+			globalUnion.saveAsTextFile("/home/pavan/workspace/outputunion.txt");
 				
 		
 }
