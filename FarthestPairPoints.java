@@ -18,8 +18,6 @@ public class FarthestPairPoints {
 
 	public static void main(String args[]) throws IOException
 	{
-	    Date date1 = new Date();
-	    System.out.println(date1.toString());
 		SparkConf conf = new SparkConf()
 	            .setMaster("local")
 	            .setAppName("check");
@@ -104,7 +102,6 @@ public class FarthestPairPoints {
 					farthestDistance = localDistance;
 					farthest_a = GlobalConvexHullPoints.get(i);
 					farthest_b = GlobalConvexHullPoints.get(j);
-					//System.out.println("farthestDistance = "+farthestDistance+", a = "+farthest_a+", b = "+farthest_b);
 				}
 			}
 		}
@@ -112,11 +109,8 @@ public class FarthestPairPoints {
 		ArrayList<Coordinate> farthestPoints = new ArrayList<Coordinate>();
 		farthestPoints.add(farthest_a);
 		farthestPoints.add(farthest_b);
-		//System.out.println("Final farthestDistance = "+farthestDistance+", a = "+farthest_a+", b = "+farthest_b);
 		JavaRDD<Coordinate>globalFathestPoints = sc.parallelize(farthestPoints);
 		globalFathestPoints.saveAsTextFile("/home/pavan/workspace/farthestpairpoints.txt");
 		sc.close();
-		Date date2 = new Date();
-	    System.out.println(date2.toString());
 		}
 }
