@@ -22,7 +22,7 @@ public class ConvexHull {
 	            .setMaster("local")
 	            .setAppName("check");
 		JavaSparkContext sc = new JavaSparkContext(conf);
-		JavaRDD<String> input = sc.textFile("/home/jaswitha/InputData/aid.csv");
+		JavaRDD<String> input = sc.textFile("/home/pavan/workspace/ConvexHullTestData.csv");
 		JavaRDD<Coordinate> localconvexpoints = input.mapPartitions(new FlatMapFunction<Iterator<String>,Coordinate>(){
 			  public Iterable<Coordinate> call(Iterator<String> s) throws Exception {
 				
@@ -95,7 +95,7 @@ public class ConvexHull {
 		
 	
 });
-		globalConvexpoints.saveAsTextFile("/home/jaswitha/Downloads/outputconex.txt");	
+		globalConvexpoints.saveAsTextFile("/home/pavan/workspace/outputconex.txt");	
 		}
 	
 }
